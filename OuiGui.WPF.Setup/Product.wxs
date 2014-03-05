@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product Id="*" Name="OuiGui Chocolatey" Language="1033" Version="!(bind.FileVersion.OuiGui.exe)" Manufacturer="Cole Cameron"
+           UpgradeCode="e435e44e-4f34-41b6-83b4-50f0d84d5b01">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MediaTemplate EmbedCab="yes" />
+    
+    <Icon Id="icon.ico" SourceFile="..\OuiGui.WPF\chocoicon.ico"/>
+    <Property Id="ARPPRODUCTICON" Value="icon.ico" />
+    <Property Id="ARPNOREPAIR" Value="1" />
+    <Property Id="ARPNOMODIFY" Value="1" />
+
+		<Feature Id="ProductFeature" Title="OuiGui.WPF.Setup" Level="1">
+			<ComponentGroupRef Id="ProductComponents" />
+      <ComponentRef Id="ApplicationShortcut" />
+		</Feature>
+	</Product>
+
+	<Fragment>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder">
+				<Directory Id="INSTALLFOLDER" Name="OuiGui" />
+			</Directory>
+		</Directory>
+	</Fragment>
+
+  <Fragment>
+    <DirectoryRef Id="TARGETDIR">
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ShortcutFolder" Name="OuiGui">
+          <Component Id="ApplicationShortcut" Guid="{5E3460B9-66FD-4359-8E4F-031AAD98C74E}">
+            <Shortcut Id="ApplicationStartMenuShortcut"
+                  Name="OuiGui Chocolatey"
+                  Description="Easy-to-use interface for Chocolatey Nuget"
+                  Target="[INSTALLFOLDER]OuiGui.exe"
+                  WorkingDirectory="INSTALLFOLDER"/>
+            <Shortcut Id="Uninstall"
+                              Name="Uninstall OuiGui Chocolatey"
+                              Description="Uninstalls OuiGui Chocolatey"
+                              Target="[System64Folder]msiexec.exe"
+                              Arguments="/x [ProductCode]"/>
+            <RemoveFolder Id="RemoveShortcutFolder" On="uninstall"/>
+            <RegistryValue Root="HKCU" Key="Software\Cole Cameron\OuiGui" 
+                            Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+          </Component>
+        </Directory>
+      </Directory>
+    </DirectoryRef>
+  </Fragment>
+
+	<Fragment>
+		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+      <Component Id="OuiGuiExe" Guid="{C63E7D36-01FC-4C86-85B6-617FB9617066}">
+        <File Id="OuiGui.exe" Name="OuiGui.exe" KeyPath="yes"
+              Source="..\OuiGui.WPF\bin\$(var.OuiGui.WPF.Configuration)\OuiGui.WPF.exe" />
+      </Component>
+
+      <Component Id="OuiGuiExeConfig" Guid="{B51A9F0C-6568-4B5B-806A-8DA647EF2F22}">
+        <File Id="OuiGui.exe.config" Name="OuiGui.exe.config" KeyPath="yes"
+              Source="..\OuiGui.WPF\bin\$(var.OuiGui.WPF.Configuration)\OuiGui.WPF.exe.config" />
+      </Component>
+      
+      <Component Id="OuiGuiLibDll" Guid="{E2CF07A9-5565-45C7-840C-B65FE7BFB1C7}">
+        <File Id="OuiGui.Lib.dll" Name="OuiGui.Lib.dll" KeyPath="yes"
+              Source="..\OuiGui.WPF\bin\$(var.OuiGui.WPF.Configuration)\OuiGui.Lib.dll" />
+      </Component>
+    
+      <Component Id="NLogDll" Guid="{5585559F-3341-43B4-9035-3D8271CF3A23}">
+        <File Id="NLog.dll" Name="NLog.dll" KeyPath="yes"
+              Source="..\OuiGui.WPF\bin\$(var.OuiGui.WPF.Configuration)\NLog.dll" />
+      </Component>
+    
+      <Component Id="GalaSoftMvvmLightWPF45.dll" Guid="{D0199622-BC27-4C1A-9D40-14DFEC76BECF}">
+        <File Id="GalaSoft.MvvmLight.WPF45.dll" Name="GalaSoft.MvvmLight.WPF45.dll" KeyPath="yes"
+              Source="..\OuiGui.WPF\bin\$(var.OuiGui.WPF.Configuration)\GalaSoft.MvvmLight.WPF45.dll" />
+      </Component>
+    
+      <Component Id="GalaSoftMvvmLightExtrasWPF45Dll" Guid="{00DC28C3-C502-40ED-99D8-E620E7CE9647}">
+        <File Id="GalaSoft.MvvmLight.Extras.WPF45.dll" Name="GalaSoft.MvvmLight.Extras.WPF45.dll" KeyPath="yes"
+              Source="..\OuiGui.WPF\bin\$(var.OuiGui.WPF.Configuration)\GalaSoft.MvvmLight.Extras.WPF45.dll" />
+      </Component>
+
+      <Component Id="MahAppsMetroDll" Guid="{89EDE375-B03D-4538-9651-D71A096FBAF4}">
+        <File Id="MahApps.Metro.dll" Name="MahApps.Metro.dll" KeyPath="yes"
+              Source="..\OuiGui.WPF\bin\$(var.OuiGui.WPF.Configuration)\MahApps.Metro.dll" />
+      </Component>
+    
+      <Component Id="MicrosoftDataEdmDll" Guid="{DEBF7EF7-E508-4CFB-ADAC-1CB130C08FE1}">
+        <File Id="Microsoft.Data.Edm.dll" Name="Microsoft.Data.Edm.dll" KeyPath="yes"
+              Source="..\OuiGui.WPF\bin\$(var.OuiGui.WPF.Configuration)\Microsoft.Data.Edm.dll" />
+      </Component>
+    
+      <Component Id="MicrosoftDataODataDll" Guid="{BA6F0C6C-0140-4F31-A8A9-25A27A97C4E4}">
+        <File Id="Microsoft.Data.OData.dll" Name="Microsoft.Data.OData.dll" KeyPath="yes"
+              Source="..\OuiGui.WPF\bin\$(var.OuiGui.WPF.Configuration)\Microsoft.Data.OData.dll" />
+      </Component>
+    
+      <Component Id="MicrosoftDataServicesClientDll" Guid="{6D1EEC3D-C0F3-4E17-AD50-866E3ED844D3}">
+        <File Id="Microsoft.Data.Services.Client.dll" Name="Microsoft.Data.Services.Client.dll" KeyPath="yes"
+              Source="..\OuiGui.WPF\bin\$(var.OuiGui.WPF.Configuration)\Microsoft.Data.Services.Client.dll" />
+      </Component>
+    
+      <Component Id="MicrosoftPracticesServiceLocationDll" Guid="{50E0C5E6-034C-4837-8786-C29555989E0E}">
+        <File Id="Microsoft.Practices.ServiceLocation.dll" Name="Microsoft.Practices.ServiceLocation.dll" KeyPath="yes"
+              Source="..\OuiGui.WPF\bin\$(var.OuiGui.WPF.Configuration)\Microsoft.Practices.ServiceLocation.dll" />
+      </Component>
+    
+      <Component Id="SystemSpatialDll" Guid="{730D476F-987B-49B7-ADD8-ADAB82BC8C17}">
+        <File Id="System.Spatial.dll" Name="System.Spatial.dll" KeyPath="yes"
+              Source="..\OuiGui.WPF\bin\$(var.OuiGui.WPF.Configuration)\System.Spatial.dll" />
+      </Component>
+    
+      <Component Id="SystemWindowsInteractivityDll" Guid="{463813B7-A672-449D-85C6-0666F4E3F9BF}">
+        <File Id="System.Windows.Interactivity.dll" Name="System.Windows.Interactivity.dll" KeyPath="yes"
+              Source="..\OuiGui.WPF\bin\$(var.OuiGui.WPF.Configuration)\System.Windows.Interactivity.dll" />
+      </Component>
+    
+      <Component Id="XceedWpfToolkitDll" Guid="{B53C4BEE-06F6-489C-BCD7-2F87044BD42B}">
+        <File Id="Xceed.Wpf.Toolkit.dll" Name="Xceed.Wpf.Toolkit.dll" KeyPath="yes"
+              Source="..\OuiGui.WPF\bin\$(var.OuiGui.WPF.Configuration)\Xceed.Wpf.Toolkit.dll" />
+      </Component>
+    
+      <!--<Component Id="" Guid="">
+        <File Id="" Name="" KeyPath="yes"
+              Source="..\OuiGui.WPF\bin\$(var.OuiGui.WPF.Configuration)\" />
+      </Component>-->
+		</ComponentGroup>
+	</Fragment>
+</Wix>

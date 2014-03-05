@@ -1,0 +1,200 @@
+﻿<UserControl x:Class="OuiGui.WPF.Views.PackageListView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:wpfToolkit="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+             xmlns:cmd="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Extras.WPF45"
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+             xmlns:view="clr-namespace:OuiGui.WPF.Views"
+             xmlns:vm="clr-namespace:OuiGui.WPF.ViewModels"
+             xmlns:local="clr-namespace:OuiGui.WPF"
+             xmlns:util="clr-namespace:OuiGui.WPF.Util"
+             xmlns:lib="clr-namespace:OuiGui.Lib;assembly=OuiGui.Lib"
+             xmlns:converters="clr-namespace:OuiGui.WPF.Converters"
+             mc:Ignorable="d" d:DesignHeight="600" d:DesignWidth="300">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
+    <UserControl.Resources>
+        <converters:PackageToPackageDetailsViewModelConverter x:Key="PackageConverter" />
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <converters:PolynomialConverter Coefficients="1,-1" x:Key="MinusOneConverter" />
+        <converters:PolynomialConverter Coefficients="1,1" x:Key="PlusOneConverter" />
+        <converters:DateTimeToVisibilityConverter x:Key="DateTimeToVisibilityConverter" />
+        <converters:PackageVersionConverter x:Key="NeedsUpdateConverter" />
+        <converters:CountToDigitsConverter x:Key="CountToDigitsConverter" />
+        
+        <sys:Int32 x:Key="One">1</sys:Int32>
+    </UserControl.Resources>
+    
+    <UserControl.InputBindings>
+        <KeyBinding Key="F5" Command="{Binding LoadCommand}" />
+    </UserControl.InputBindings>
+
+    <DockPanel Grid.Column="0">
+        <TextBox DockPanel.Dock="Top" Margin="3" controls:TextboxHelper.ClearTextButton="True" controls:TextboxHelper.Watermark="Search"
+                 Text="{Binding SearchText, Delay=1000, UpdateSourceTrigger=PropertyChanged}" />
+
+        <DockPanel DockPanel.Dock="Top" LastChildFill="True" Margin="3">
+            <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center">
+                    <Run Text="Displaying" />
+                    <Run Text="{Binding StartIndex, Mode=OneWay}" />
+                    <Run Text="to" />
+                    <Run Text="{Binding EndIndex, Mode=OneWay}" />
+                    <Run Text="of" />
+                    <Run Text="{Binding TotalItemCount, Mode=OneWay}" />
+            </TextBlock>
+
+            <ComboBox Margin="3,0,0,0" ItemsSource="{util:Enumeration {x:Type lib:PackageFilter}}"
+                      DisplayMemberPath="Description" SelectedValuePath="Value"
+                      SelectedValue="{Binding CurrentFilter}" />
+        </DockPanel>
+
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom" HorizontalAlignment="Center">
+            <Button Command="{Binding GoToPageCommand}" CommandParameter="{StaticResource One}" x:Name="btnGoToFirstPage"
+                            Style="{DynamicResource MetroCircleButtonStyle2}" Width="35" Height="35">
+                <Rectangle Width="15" Height="15">
+                    <Rectangle.Fill>
+                        <DrawingBrush>
+                            <DrawingBrush.Drawing>
+                                <DrawingGroup>
+                                    <GeometryDrawing Brush="{Binding ElementName=btnGoToFirstPage, Path=Foreground}"
+                                                     Geometry="F1 M 0.5,0.500021L 20.5,0.500021L 20.875,86.7084L 0.875023,86.7084L 0.5,0.500021 Z " />
+                                    <GeometryDrawing Brush="{Binding ElementName=btnGoToFirstPage, Path=Foreground}"
+                                                     Geometry="F1 M 65.4999,86.7501L 22.5,43.7499L 65.239,0.599386L 65.4999,86.7501 Z " />
+                                </DrawingGroup>
+                            </DrawingBrush.Drawing>
+                        </DrawingBrush>
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Button>
+
+            <RepeatButton Delay="500" Interval="100" Command="{Binding GoToPageCommand}" x:Name="btnGoToPreviousPage"
+                          CommandParameter="{Binding CurrentPage, Converter={StaticResource MinusOneConverter}}"
+					      Style="{DynamicResource MetroCircleButtonStyle2}" Height="35" Width="35">
+                <Rectangle Width="15" Height="15">
+                    <Rectangle.Fill>
+                        <DrawingBrush>
+                            <DrawingBrush.Drawing>
+                                <GeometryDrawing Brush="{Binding ElementName=btnGoToPreviousPage, Path=Foreground}"
+                                                 Geometry="F1 M 43.5,86.6507L 0.500008,43.6505L 43.2391,0.500021L 43.5,86.6507 Z " />
+                            </DrawingBrush.Drawing>
+                        </DrawingBrush>
+                    </Rectangle.Fill>
+                </Rectangle>
+            </RepeatButton>
+
+            <TextBox Width="30" Margin="3" VerticalAlignment="Center" HorizontalContentAlignment="Center"
+                     Background="Transparent"
+                     MaxLength="{Binding PageCount, Converter={StaticResource CountToDigitsConverter}}"
+                     Text="{Binding CurrentPage, UpdateSourceTrigger=PropertyChanged, Delay=1000}" />
+            <TextBlock VerticalAlignment="Center">
+                        <Run Text="/" />
+                        <Run Text="{Binding PageCount, Mode=OneWay}" />
+            </TextBlock>
+
+            <RepeatButton Delay="500" Interval="100" Command="{Binding GoToPageCommand}" x:Name="btnGoToNextPage"
+                          CommandParameter="{Binding CurrentPage, Converter={StaticResource PlusOneConverter}}"
+                          Style="{DynamicResource MetroCircleButtonStyle2}" Width="35" Height="35">
+                <Rectangle Width="15" Height="15">
+                    <Rectangle.Fill>
+                        <DrawingBrush>
+                            <DrawingBrush.Drawing>
+                                <GeometryDrawing Brush="{Binding ElementName=btnGoToNextPage, Path=Foreground}"
+                                                 Geometry="F1 M 0.499989,86.6507L 43.4999,43.6506L 0.760895,0.500061L 0.499989,86.6507 Z " />
+                            </DrawingBrush.Drawing>
+                        </DrawingBrush>
+                    </Rectangle.Fill>
+                </Rectangle>
+            </RepeatButton>
+
+            <Button Command="{Binding GoToPageCommand}" CommandParameter="{Binding PageCount}" x:Name="btnGoToLastPage"
+                            Style="{DynamicResource MetroCircleButtonStyle2}" Width="35" Height="35">
+                <Rectangle Width="15" Height="15">
+                    <Rectangle.Fill>
+                        <DrawingBrush>
+                            <DrawingBrush.Drawing>
+                                <DrawingGroup>
+                                    <GeometryDrawing Brush="{Binding ElementName=btnGoToLastPage, Path=Foreground}"
+                                                     Geometry="F1 M 0.499985,86.75L 43.4999,43.7499L 0.760883,0.599405L 0.499985,86.75 Z " />
+                                    <GeometryDrawing Brush="{Binding ElementName=btnGoToLastPage, Path=Foreground}"
+                                                     Geometry="F1 M 65.4999,0.499979L 45.4999,0.499979L 45.1249,86.7083L 65.1249,86.7083L 65.4999,0.499979 Z " />
+                                </DrawingGroup>
+                            </DrawingBrush.Drawing>
+                        </DrawingBrush>
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Button>
+        </StackPanel>
+
+        <wpfToolkit:BusyIndicator IsBusy="{Binding IsBusy}" BusyContent="{Binding BusyStatus}">
+            <wpfToolkit:BusyIndicator.BusyContentTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <ContentPresenter Content="{Binding}" />
+                        <controls:MetroProgressBar IsIndeterminate="True" Margin="2" />
+                        <Button Margin="2" HorizontalAlignment="Center" Content="Dismiss" Style="{DynamicResource SquareButtonStyle}"
+                                Command="{Binding PackageListViewModel.DismissBusyIndicatorCommand, Source={StaticResource VML}}" />
+                    </StackPanel>
+                </DataTemplate>
+            </wpfToolkit:BusyIndicator.BusyContentTemplate>
+            <wpfToolkit:BusyIndicator.ProgressBarStyle>
+                <Style TargetType="ProgressBar">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </Style>
+            </wpfToolkit:BusyIndicator.ProgressBarStyle>
+
+            <ListView SizeChanged="lstPackages_SizeChanged" Grid.Column="0" ItemsSource="{Binding PackageList}"
+                          SelectedValue="{Binding RelativeSource={RelativeSource AncestorType={x:Type view:PackageListView}}, Path=SelectedPackage}" SelectionMode="Single" Background="Transparent">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Package">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock TextTrimming="CharacterEllipsis" Text="{Binding Title, FallbackValue='&lt;No Package Title&gt;'}" />
+
+                                        <Rectangle Width="15" Height="15" Margin="3 0 0 0 " ToolTip="Installed"
+                                                   Fill="{StaticResource InstallDrawingBrush}"
+                                                   Visibility="{Binding IsInstalled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                                        <Rectangle Width="15" Height="15" Margin="3 0 0 0" ToolTip="Prerelease"
+                                                   Fill="{StaticResource PrereleaseDrawingBrush}"
+                                                   Visibility="{Binding IsPrerelease, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                                        <Rectangle Width="15" Height="15" Margin="3 0 0 0" ToolTip="Needs Update"
+                                                   Fill="{StaticResource NeedsUpdateDrawingBrush}">
+                                            <Rectangle.Visibility>
+                                                <MultiBinding Converter="{StaticResource NeedsUpdateConverter}">
+                                                    <Binding Path="InstalledVersion" />
+                                                    <Binding Path="Version" />
+                                                </MultiBinding>
+                                            </Rectangle.Visibility>
+                                        </Rectangle>
+
+                                        <Rectangle Width="15" Height="15" Margin="3 0 0 0" ToolTip="Recently Updated"
+                                                   Fill="{StaticResource RecentlyUpdatedDrawingBrush}"
+                                                   Visibility="{Binding LastUpdated, Converter={StaticResource DateTimeToVisibilityConverter}}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Version" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock TextTrimming="CharacterEllipsis" Text="{Binding Version}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </wpfToolkit:BusyIndicator>
+    </DockPanel>
+</UserControl>

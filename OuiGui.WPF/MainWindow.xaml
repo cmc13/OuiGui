@@ -1,0 +1,147 @@
+﻿<controls:MetroWindow x:Class="OuiGui.WPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:view="clr-namespace:OuiGui.WPF.Views"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:cmd="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Extras.WPF45"
+        xmlns:converters="clr-namespace:OuiGui.WPF.Converters"
+        xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:wpfToolkit="http://schemas.xceed.com/wpf/xaml/toolkit"
+        Icon="pack://application:,,,/OuiGui.WPF;component/Images/chocolateyicon.gif"
+        Title="OuiGui Chocolatey" Height="600" Width="800" MinWidth="800" MinHeight="600"
+                      Background="{StaticResource WindowBackgroundBrush}"
+        DataContext="{Binding Source={StaticResource VML}, Path=MainViewModel}">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Closing">
+            <cmd:EventToCommand Command="{Binding ClosingCommand}" PassEventArgsToCommand="True" />
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Loaded">
+            <cmd:EventToCommand Command="{Binding LoadCommand}" PassEventArgsToCommand="False" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    
+    <controls:MetroWindow.Resources>
+        <converters:PackageToPackageDetailsViewModelConverter x:Key="PackageConverter" />
+    </controls:MetroWindow.Resources>
+    
+    <controls:MetroWindow.InputBindings>
+        <KeyBinding Key="L" Modifiers="Control" Command="{Binding ShowLogCommand}" />
+        <KeyBinding Key="Q" Modifiers="Control" Command="{Binding ShowInstallQueueCommand}" />
+        <KeyBinding Key="OemQuestion" Modifiers="Control" Command="{Binding ShowHelpCommand}" />
+    </controls:MetroWindow.InputBindings>
+    
+    <controls:MetroWindow.Flyouts>
+        <controls:FlyoutsControl>
+            <controls:Flyout Header="Pending Installs" Position="Right" Width="400" Theme="Accent"
+                             IsOpen="{Binding ShowInstallQueue}">
+                <view:InstallActionView DataContext="{Binding Source={StaticResource VML}, Path=InstallActionViewModel}"
+                                        Foreground="White" />
+            </controls:Flyout>
+            
+            <controls:Flyout Header="Log" Position="Bottom" Height="200" Theme="Light" IsOpen="{Binding ShowLog}">
+                <view:LogView DataContext="{Binding Source={StaticResource VML}, Path=LogViewModel}" />
+            </controls:Flyout>
+            
+            <controls:Flyout Header="Welcome to OuiGui Chocolatey" Position="Left" Width="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=ActualWidth}"
+                             IsOpen="{Binding ShowHelp}" Theme="Light">
+                <view:HelpView DataContext="{Binding Source={StaticResource VML}, Path=HelpViewModel}" />
+            </controls:Flyout>
+        </controls:FlyoutsControl>
+    </controls:MetroWindow.Flyouts>
+    
+    <controls:MetroWindow.WindowCommands>
+        <controls:WindowCommands>
+            <Button Command="{Binding ShowHelpCommand}">
+                <Rectangle Width="16" Height="20">
+                    <Rectangle.Style>
+                        <Style TargetType="Rectangle">
+                            <Setter Property="ToolTip" Value="Show Help (Ctrl+?)" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ShowHelp}" Value="True">
+                                    <Setter Property="ToolTip" Value="Hide Help (Ctrl+?)" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Rectangle.Style>
+                    <Rectangle.Fill>
+                        <DrawingBrush>
+                            <DrawingBrush.Drawing>
+                                <GeometryDrawing Brush="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}"
+                                                 Geometry="F1 M 37.2083,49.0833C 39.3945,49.0833 41.1667,50.8555 41.1667,53.0417C 41.1667,55.2278 39.3945,57 37.2083,57C 35.0222,57 33.25,55.2278 33.25,53.0417C 33.25,50.8555 35.0222,49.0833 37.2083,49.0833 Z M 38,17.4167C 44.9956,17.4167 50.6666,21.9416 50.6666,28.5C 50.6666,30.875 49.0833,34.8333 45.9167,36.4167C 42.75,38 41.1667,40.1267 41.1667,42.75L 41.1667,45.9167L 33.25,45.9167L 33.25,43.5417C 33.25,38.1571 38,34.8333 39.5833,33.25C 42.75,30.0833 42.75,29.644 42.75,28.5C 42.75,25.8767 40.6233,23.75 38,23.75C 35.3766,23.75 33.25,25.8767 33.25,28.5L 33.25,30.875L 25.3333,30.875L 25.3333,29.2917C 25.3333,22.7333 31.0044,17.4167 38,17.4167 Z " />
+                            </DrawingBrush.Drawing>
+                        </DrawingBrush>
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Button>
+            <Button Command="{Binding ShowInstallQueueCommand}">
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel.Style>
+                        <Style TargetType="StackPanel">
+                            <Setter Property="ToolTip" Value="Show Install Queue (Ctrl+Q)" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ShowInstallQueue}" Value="True">
+                                    <Setter Property="ToolTip" Value="Hide Install Queue (Ctrl+Q)" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+                    
+                    <Rectangle Width="20" Height="20">
+                        <Rectangle.Fill>
+                            <DrawingBrush>
+                                <DrawingBrush.Drawing>
+                                    <GeometryDrawing Brush="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}"
+                                                     Geometry="F1 M 57.0079,38.0053L 38.0053,47.5066L 19.0027,38.0053L 25.3369,34.8382L 38.0053,41.1724L 50.6737,34.8382L 57.0079,38.0053 Z M 38.0053,19.0027L 57.0079,28.504L 38.0053,38.0053L 19.0026,28.504L 38.0053,19.0027 Z M 57.0079,47.5066L 38.0053,57.008L 19.0026,47.5066L 25.3369,44.3395L 38.0053,50.6737L 50.6737,44.3395L 57.0079,47.5066 Z " />
+                                </DrawingBrush.Drawing>
+                            </DrawingBrush>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                    <TextBlock Foreground="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}"
+                               Margin="3 0 0 0">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Text" Value="Show Install Queue" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ShowInstallQueue}" Value="True">
+                                        <Setter Property="Text" Value="Hide Install Queue" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </StackPanel>
+            </Button>
+        </controls:WindowCommands>
+    </controls:MetroWindow.WindowCommands>
+
+    <wpfToolkit:BusyIndicator IsBusy="{Binding IsBusy}" BusyContent="{Binding BusyStatus}">
+        <wpfToolkit:BusyIndicator.BusyContentTemplate>
+            <DataTemplate>
+                <StackPanel>
+                    <ContentPresenter Content="{Binding}" />
+                    <controls:MetroProgressBar IsIndeterminate="True" Margin="2" />
+                </StackPanel>
+            </DataTemplate>
+        </wpfToolkit:BusyIndicator.BusyContentTemplate>
+        <wpfToolkit:BusyIndicator.ProgressBarStyle>
+            <Style TargetType="ProgressBar">
+                <Setter Property="Visibility" Value="Collapsed" />
+            </Style>
+        </wpfToolkit:BusyIndicator.ProgressBarStyle>
+        
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="2*" />
+            </Grid.ColumnDefinitions>
+
+            <view:PackageListView x:Name="packageList" Grid.Column="0" DataContext="{Binding Source={StaticResource VML}, Path=PackageListViewModel}" />
+
+            <GridSplitter VerticalAlignment="Stretch" HorizontalAlignment="Center" Grid.Column="1" Style="{StaticResource gridSplitterStyle}" />
+
+            <view:PackageDetailsView Grid.Column="2"
+                                 DataContext="{Binding ElementName=packageList, Path=SelectedPackage, Converter={StaticResource PackageConverter}}" />
+        </Grid>
+    </wpfToolkit:BusyIndicator>
+</controls:MetroWindow>

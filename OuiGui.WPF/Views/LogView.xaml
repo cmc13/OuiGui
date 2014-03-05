@@ -1,0 +1,43 @@
+﻿<UserControl x:Class="OuiGui.WPF.Views.LogView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:util="clr-namespace:OuiGui.WPF.Util"
+             DataContext="{Binding Source={StaticResource VML}, Path=LogViewModel}">
+    <ListView ItemsSource="{Binding LogItems}" SizeChanged="ListView_SizeChanged"
+              SelectionMode="Single"
+              util:GridViewSort.AutoSort="True"
+              util:GridViewSort.ShowSortGlyph="True"
+              ScrollViewer.VerticalScrollBarVisibility="Visible"
+              ScrollViewer.HorizontalScrollBarVisibility="Hidden">
+        <util:GridViewSort.SortGlyphAscending>
+            <DrawingImage>
+                <DrawingImage.Drawing>
+                    <GeometryDrawing Brush="Black"
+                                     Geometry="F1 M 37.8516,35.625L 34.6849,38.7917L 23.6016,50.2708L 23.6016,39.9792L 37.8516,24.9375L 52.1016,39.9792L 52.1016,50.2708L 41.0182,38.7917L 37.8516,35.625 Z " />
+                </DrawingImage.Drawing>
+            </DrawingImage>
+        </util:GridViewSort.SortGlyphAscending>
+        <util:GridViewSort.SortGlyphDescending>
+            <DrawingImage>
+                <DrawingImage.Drawing>
+                    <GeometryDrawing Brush="Black"
+                                     Geometry="F1 M 37.8516,39.5833L 52.1016,24.9375L 52.1016,35.2292L 37.8516,50.2708L 23.6016,35.2292L 23.6016,24.9375L 37.8516,39.5833 Z " />
+                </DrawingImage.Drawing>
+            </DrawingImage>
+        </util:GridViewSort.SortGlyphDescending>
+        <ListView.View>
+            <GridView>
+                <GridViewColumn DisplayMemberBinding="{Binding Timestamp}" Header="Timestamp" util:GridViewSort.PropertyName="Timestamp" />
+                <GridViewColumn DisplayMemberBinding="{Binding Severity}" Header="Severity" util:GridViewSort.PropertyName="Severity" />
+                <GridViewColumn DisplayMemberBinding="{Binding Logger}" Header="Logger" util:GridViewSort.PropertyName="Logger" />
+                <GridViewColumn Header="Message" util:GridViewSort.PropertyName="Message">
+                    <GridViewColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Message}" TextWrapping="WrapWithOverflow" />
+                        </DataTemplate>
+                    </GridViewColumn.CellTemplate>
+                </GridViewColumn>
+            </GridView>
+        </ListView.View>
+    </ListView>
+</UserControl>

@@ -31,7 +31,7 @@
             <Setter Property="Height" Value="150" />
         </Style>
 
-        <BitmapImage x:Key="DefaultImage" UriSource="pack://application:,,,/OuiGui.WPF;component/Images/chocolateyicon.gif" />
+        <BitmapImage x:Key="DefaultImage" UriSource="pack://application:,,,/OuiGui.WPF;component/Images/chocolateyicon.png" />
     </UserControl.Resources>
 
     <Grid>
@@ -159,7 +159,7 @@
                     <StackPanel Grid.Column="0">
                         <Grid>
                             <util:AutoGreyableImage Width="128" Height="128" Opacity="0.3" IsEnabled="False"
-                                                     Source="pack://application:,,,/OuiGui.WPF;component/Images/chocolateyicon.gif"
+                                                     Source="pack://application:,,,/OuiGui.WPF;component/Images/chocolateyicon.png"
                                                      Visibility="{Binding Package.HasIconUrl, Converter={StaticResource ReverseBooleanToVisiblityConverter}}"/>
                             <Image Width="128" Height="128">
                                 <Image.Source>

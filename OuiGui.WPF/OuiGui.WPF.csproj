@@ -231,13 +231,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\chocolateyicon.gif" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="chocoicon.ico" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Help.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\chocolateyicon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

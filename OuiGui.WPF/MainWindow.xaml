@@ -7,9 +7,9 @@
         xmlns:converters="clr-namespace:OuiGui.WPF.Converters"
         xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:wpfToolkit="http://schemas.xceed.com/wpf/xaml/toolkit"
-        Icon="pack://application:,,,/OuiGui.WPF;component/Images/chocolateyicon.gif"
+        Icon="pack://application:,,,/OuiGui.WPF;component/Images/chocolateyicon.png"
         Title="OuiGui Chocolatey" Height="600" Width="800" MinWidth="800" MinHeight="600"
-                      Background="{StaticResource WindowBackgroundBrush}"
+        Background="{StaticResource WindowBackgroundBrush}"
         DataContext="{Binding Source={StaticResource VML}, Path=MainViewModel}">
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Closing">

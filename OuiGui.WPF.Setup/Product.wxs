@@ -121,6 +121,11 @@
         <File Id="Xceed.Wpf.Toolkit.dll" Name="Xceed.Wpf.Toolkit.dll" KeyPath="yes"
               Source="..\OuiGui.WPF\bin\$(var.OuiGui.WPF.Configuration)\Xceed.Wpf.Toolkit.dll" />
       </Component>
+      
+      <Component Id="MarkdownXamlDll" Guid="{A279131A-553B-4895-A0BE-B51617E61702}">
+        <File Id="Markdown.Xaml.dll" Name="Markdown.Xaml.dll" KeyPath="yes"
+              Source="..\OuiGui.WPF\bin\$(var.OuiGui.WPF.Configuration)\Markdown.Xaml.dll" />
+      </Component>
     
       <!--<Component Id="" Guid="">
         <File Id="" Name="" KeyPath="yes"

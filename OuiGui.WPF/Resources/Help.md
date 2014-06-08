@@ -8,7 +8,7 @@ Excellent question! On the left side of the application window, you'll notice a 
 
 ## Ack! This Isn't Helpful Enough!
 
-I'm sorry about that. I'm a software engineer (read: code monkey) so my communication faculties are limited. If this help dialog failed in its mission to be helpful, please open an issue on the project's Github page (see below) describing what you think is missing and I'll do my best to update this help text and deploy an update.
+Well, that's not good at all. I'm a software engineer (read: code monkey) so my communication faculties are limited. If this help dialog failed in its mission to be helpful, please open an issue on the project's Github page (see below) describing what you think is missing and I'll do my best to update this help text and deploy an update.
 
 # Project Information
 

@@ -53,6 +53,17 @@ namespace OuiGui.Lib.Model
             .LastOrDefault())
         { }
 
+        internal Package(InstalledPackage installedPackage)
+        {
+            this.Id = installedPackage.Title;
+            this.Title = installedPackage.Title;
+            this.InstalledVersion = installedPackage.Version;
+            this.IsLatestVersion = true;
+            this.IsPrerelease = false;
+            this.Version = installedPackage.Version;
+            this.Dependencies = new string[0];
+        }
+
         #endregion
 
         #region Public Property Definitions

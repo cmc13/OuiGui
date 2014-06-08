@@ -16,5 +16,6 @@ namespace OuiGui.WPF.Services
         void Clear();
         event EventHandler InstallCompleted;
         event EventHandler<OuiGui.WPF.Services.InstallService.DataReceivedEventArgs> DataReceived;
+        event EventHandler PendingInstallAdded;
     }
 }

@@ -498,7 +498,11 @@ namespace OuiGui.Lib.Services
                         return;
                     }
 
-                    tcs.SetResult(new Package(result.Single(), installedPackage));
+                    var singleResult = result.SingleOrDefault();
+                    if (singleResult != null)
+                        tcs.SetResult(new Package(singleResult, installedPackage));
+                    else
+                        tcs.SetResult(new Package(installedPackage));
                 }, null);
 
             return tcs.Task;

@@ -96,6 +96,7 @@
                             </DrawingBrush>
                         </Rectangle.Fill>
                     </Rectangle>
+                    
                     <TextBlock Foreground="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}"
                                Margin="3 0 0 0">
                         <TextBlock.Style>
@@ -109,6 +110,10 @@
                             </Style>
                         </TextBlock.Style>
                     </TextBlock>
+
+                    <TextBlock Text="{Binding PendingInstallCount, StringFormat='(\{0\})'}"
+                               Foreground="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}"
+                               Margin="3 0 0 0" />
                 </StackPanel>
             </Button>
         </controls:WindowCommands>

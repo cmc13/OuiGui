@@ -86,6 +86,7 @@ namespace OuiGui.WPF.Services
             {
                 this.installActions.Add(action);
                 action.Package.IsInstallPending = true;
+                this.OnPendingInstallAdded();
             }
 
             if (!this.IsRunning)
@@ -117,7 +118,6 @@ namespace OuiGui.WPF.Services
                     this.CurrentAction = this.Pop();
                     await this.RunAction(this.CurrentAction);
                     this.CurrentAction.Package.IsInstallPending = false;
-                    this.OnInstallCompleted();
                 }
             }
             finally
@@ -125,6 +125,7 @@ namespace OuiGui.WPF.Services
                 this.CurrentAction = null;
                 this.syncLock.Release();
                 this.OnPropertyChanged("IsRunning");
+                this.OnInstallCompleted();
             }
         }
 
@@ -163,11 +164,19 @@ namespace OuiGui.WPF.Services
         }
 
         public event EventHandler InstallCompleted;
+        public event EventHandler PendingInstallAdded;
         public event EventHandler<DataReceivedEventArgs> DataReceived;
 
         protected virtual void OnInstallCompleted()
         {
             var handler = this.InstallCompleted;
+            if (handler != null)
+                handler(this, EventArgs.Empty);
+        }
+
+        protected virtual void OnPendingInstallAdded()
+        {
+            var handler = this.PendingInstallAdded;
             if (handler != null)
                 handler(this, EventArgs.Empty);
         }

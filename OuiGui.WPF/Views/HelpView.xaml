@@ -38,5 +38,5 @@
         <md:TextToFlowDocumentConverter x:Key="MarkdownConverter" Markdown="{StaticResource Markdown}" />
     </UserControl.Resources>
     
-    <FlowDocumentScrollViewer Document="{Binding Markdown, Converter={StaticResource MarkdownConverter}}" />
+    <FlowDocumentScrollViewer Margin="3" Document="{Binding Markdown, Converter={StaticResource MarkdownConverter}}" />
 </UserControl>

@@ -51,6 +51,9 @@ namespace OuiGui.WPF.ViewModels
                     }
                 };
 
+            this.installService.InstallCompleted += (s, e) => this.RaisePropertyChanged(() => this.PendingInstallCount);
+            this.installService.PendingInstallAdded += (s, e) => this.RaisePropertyChanged(() => this.PendingInstallCount);
+
             this.ShowLogCommand = new RelayCommand(() => this.ShowLog = true);
 
             this.ShowInstallQueueCommand = new RelayCommand(() => this.ShowInstallQueue = !this.ShowInstallQueue);
@@ -126,6 +129,12 @@ namespace OuiGui.WPF.ViewModels
                     base.RaisePropertyChanged(() => this.ShowHelp);
                 }
             }
+        }
+
+        public int PendingInstallCount
+        {
+            get { return this.installService.InstallActions.Count
+                + (this.installService.IsRunning ? 1 : 0); }
         }
 
         public bool ShowInstallQueue

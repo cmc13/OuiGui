@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Linq;
+using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Threading;
@@ -21,53 +21,12 @@ namespace OuiGui.Lib.Services
 
             Task.Factory.StartNew(() =>
             {
-                using (var runspace = RunspaceFactory.CreateRunspace())
+                using (var ps = PowerShell.Create())
                 {
-                    log.Trace("Opening runspace");
-                    runspace.Open();
+                    var collection = ps.AddScript(command)
+                        .Invoke<string>();
 
-                    log.Trace("Creating pipeline");
-                    using (var pipeline = runspace.CreatePipeline(command))
-                    using (var eventFlag = new ManualResetEvent(false))
-                    {
-                        pipeline.Input.Close();
-
-                        List<string> output = new List<string>();
-                        pipeline.Output.DataReady += (s, e) =>
-                            {
-                                var data = pipeline.Output.NonBlockingRead();
-                                foreach (var obj in data)
-                                {
-                                    var result = obj.ToString();
-                                    log.Trace("Received data from pipeline: {0}", result);
-                                    output.Add(result);
-                                }
-                            };
-                        pipeline.Error.DataReady += (s, e) =>
-                            {
-                                var data = pipeline.Error.NonBlockingRead();
-                                foreach (var obj in data)
-                                {
-                                    var result = obj.ToString();
-                                    log.Error("Received error from pipeline: {0}", result);
-                                }
-                            };
-
-                        pipeline.StateChanged += (s, e) =>
-                            {
-                                if (pipeline.PipelineStateInfo.State == PipelineState.Completed)
-                                {
-                                    tcs.TrySetResult(output);
-                                    eventFlag.Set();
-                                }
-                            };
-
-                        log.Trace("Invoking command: {0}", command);
-                        pipeline.InvokeAsync();
-                        eventFlag.WaitOne();
-                    }
-
-                    runspace.Close();
+                    tcs.TrySetResult(collection);
                 }
             });
 
@@ -85,66 +44,14 @@ namespace OuiGui.Lib.Services
 
             Task.Factory.StartNew(() =>
             {
-                using (var runspace = RunspaceFactory.CreateRunspace())
+                using (var ps = PowerShell.Create())
                 {
-                    log.Trace("Opening runspace");
-                    runspace.Open();
+                    var collection = ps.AddScript(command)
+                        .Invoke<string>();
+                    foreach (var line in collection)
+                        onDataReceived(line);
 
-                    log.Trace("Creating pipeline");
-                    using (var pipeline = runspace.CreatePipeline(command))
-                    using (var eventFlag = new ManualResetEvent(false))
-                    {
-                        cancelToken.Register(() => pipeline.Stop());
-
-                        pipeline.Input.Close();
-
-                        pipeline.Output.DataReady += (s, e) =>
-                            {
-                                var data = pipeline.Output.NonBlockingRead();
-                                if (data != null)
-                                {
-                                    foreach (var obj in data)
-                                    {
-                                        var result = obj.ToString();
-                                        log.Trace("Received data from pipeline: {0}", result);
-                                        if (onDataReceived != null)
-                                            onDataReceived(result);
-                                    }
-                                }
-
-                                if (pipeline.Output.EndOfPipeline)
-                                {
-                                    tcs.TrySetResult(null);
-                                    eventFlag.Set();
-                                }
-                            };
-
-                        pipeline.Error.DataReady += (s, e) =>
-                            {
-                                var data = pipeline.Output.NonBlockingRead();
-                                if (data != null)
-                                {
-                                    foreach (var obj in data)
-                                    {
-                                        var result = obj.ToString();
-                                        log.Trace("Received data from pipeline: {0}", result);
-                                        if (onDataReceived != null)
-                                            onDataReceived(result);
-                                    }
-                                }
-
-                                if (pipeline.Error.EndOfPipeline)
-                                {
-                                    tcs.TrySetResult(null);
-                                    eventFlag.Set();
-                                }
-                            };
-
-                        pipeline.InvokeAsync();
-                        eventFlag.WaitOne();
-                    }
-
-                    runspace.Close();
+                    tcs.TrySetResult(null);
                 }
             }, cancelToken);
 

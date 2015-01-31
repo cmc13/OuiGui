@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Product Id="*" Name="OuiGui Chocolatey" Language="1033" Version="!(bind.FileVersion.OuiGui.exe)" Manufacturer="Cole Cameron"
+	<Product Id="*" Name="OuiGui Chocolatey" Language="1033" Version="!(bind.FileVersion.OuiGui.WPF.exe)" Manufacturer="Cole Cameron"
            UpgradeCode="e435e44e-4f34-41b6-83b4-50f0d84d5b01">
 		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
 
@@ -34,7 +34,7 @@
             <Shortcut Id="ApplicationStartMenuShortcut"
                   Name="OuiGui Chocolatey"
                   Description="Easy-to-use interface for Chocolatey Nuget"
-                  Target="[INSTALLFOLDER]OuiGui.exe"
+                  Target="[INSTALLFOLDER]OuiGui.WPF.exe"
                   WorkingDirectory="INSTALLFOLDER"/>
             <Shortcut Id="Uninstall"
                               Name="Uninstall OuiGui Chocolatey"
@@ -53,12 +53,12 @@
 	<Fragment>
 		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
       <Component Id="OuiGuiExe" Guid="{C63E7D36-01FC-4C86-85B6-617FB9617066}">
-        <File Id="OuiGui.exe" Name="OuiGui.exe" KeyPath="yes"
+        <File Id="OuiGui.WPF.exe" Name="OuiGui.WPF.exe" KeyPath="yes"
               Source="..\OuiGui.WPF\bin\$(var.OuiGui.WPF.Configuration)\OuiGui.WPF.exe" />
       </Component>
-
-      <Component Id="OuiGuiExeConfig" Guid="{B51A9F0C-6568-4B5B-806A-8DA647EF2F22}">
-        <File Id="OuiGui.exe.config" Name="OuiGui.exe.config" KeyPath="yes"
+      
+      <Component Id="OuiGuiExeConfig" Guid="{EDBB5F91-3755-4CD4-AB86-8CFA77C639D3}">
+        <File Id="OuiGui.WPF.exe.config" Name="OuiGui.WPF.exe.config" KeyPath="yes"
               Source="..\OuiGui.WPF\bin\$(var.OuiGui.WPF.Configuration)\OuiGui.WPF.exe.config" />
       </Component>
       

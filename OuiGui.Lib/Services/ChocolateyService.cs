@@ -29,7 +29,7 @@ namespace OuiGui.Lib.Services
         {
             token.ThrowIfCancellationRequested();
 
-            var regex = new Regex(@"^(.+) ([^ ]+)$");
+            var regex = new Regex(@"^(?<name>\S+)\s+(?<version>\d+(\.\d+)+(-[a-zA-Z0-9]+)*)$");
 
             IEnumerable<string> psOutput = null;
             try
@@ -43,7 +43,7 @@ namespace OuiGui.Lib.Services
             catch (TaskCanceledException) { }
 
             List<InstalledPackage> packages = new List<InstalledPackage>();
-            foreach (var str in psOutput.AllButLast())
+            foreach (var str in psOutput)
             {
                 token.ThrowIfCancellationRequested();
 
@@ -52,8 +52,8 @@ namespace OuiGui.Lib.Services
                 {
                     var ip = new InstalledPackage
                     {
-                        Title = match.Groups[1].Value,
-                        Version = match.Groups[2].Value
+                        Title = match.Groups["name"].Value,
+                        Version = match.Groups["version"].Value
                     };
 
                     log.Trace("Parsed installed package (Title: {0}, Version: {1})", ip.Title, ip.Version);

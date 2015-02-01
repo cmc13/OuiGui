@@ -151,7 +151,8 @@
             </wpfToolkit:BusyIndicator.ProgressBarStyle>
 
             <ListView SizeChanged="lstPackages_SizeChanged" Grid.Column="0" ItemsSource="{Binding PackageList}"
-                          SelectedValue="{Binding RelativeSource={RelativeSource AncestorType={x:Type view:PackageListView}}, Path=SelectedPackage}" SelectionMode="Single" Background="Transparent">
+                          SelectedValue="{Binding RelativeSource={RelativeSource AncestorType={x:Type view:PackageListView}}, Path=SelectedPackage}"
+                          SelectionMode="Single" Background="Transparent">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="Package">

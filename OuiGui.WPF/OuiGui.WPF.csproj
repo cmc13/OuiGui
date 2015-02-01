@@ -112,6 +112,7 @@
     <Compile Include="Converters\CountToDigitsConverter.cs" />
     <Compile Include="Converters\InstallActionToStringConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
+    <Compile Include="Converters\PackageToInstallActionVersionConverter.cs" />
     <Compile Include="Converters\StringToInlineCollectionConverter.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

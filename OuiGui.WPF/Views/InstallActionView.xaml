@@ -11,6 +11,7 @@
         <converters:InstallActionToStringConverter x:Key="InstallActionToStringConverter" />
         <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
         <converters:PolynomialConverter x:Key="PlusOneConverter" Coefficients="1,1" />
+        <converters:PackageToInstallActionVersionConverter x:Key="PackageToInstallActionVersionConverter" />
     </UserControl.Resources>
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -23,7 +24,7 @@
 
                     <TextBlock Text="{Binding CurrentAction.Package.Id}" FontSize="20" Margin="3 0 0 0" Foreground="{Binding ElementName=InstallActionViewControl, Path=Foreground}" />
 
-                    <TextBlock Text="{Binding CurrentAction.Package.Version, StringFormat=(v\{0\})}"
+                    <TextBlock Text="{Binding CurrentAction, Converter={StaticResource PackageToInstallActionVersionConverter}}"
                            Foreground="{Binding ElementName=InstallActionViewControl, Path=Foreground}"
                            FontSize="14" Margin="3 0 0 0" VerticalAlignment="Bottom" />
                 </StackPanel>
@@ -70,7 +71,7 @@
 
                                 <TextBlock Text="{Binding Package.Id}" FontSize="20" Margin="3 0 0 0" VerticalAlignment="Bottom" />
 
-                                <TextBlock Text="{Binding Package.Version, StringFormat=(v\{0\})}" FontSize="14" Margin="3 0 0 0" VerticalAlignment="Bottom" />
+                                <TextBlock Text="{Binding Path=., Converter={StaticResource PackageToInstallActionVersionConverter}}" FontSize="14" Margin="3 0 0 0" VerticalAlignment="Bottom" />
                             </StackPanel>
                         </DockPanel>
                     </DataTemplate>

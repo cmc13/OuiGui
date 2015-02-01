@@ -38,7 +38,7 @@
     </UserControl.InputBindings>
 
     <DockPanel Grid.Column="0">
-        <TextBox DockPanel.Dock="Top" Margin="3" controls:TextboxHelper.ClearTextButton="True" controls:TextboxHelper.Watermark="Search"
+        <TextBox DockPanel.Dock="Top" Margin="3" controls:TextBoxHelper.ClearTextButton="True" controls:TextBoxHelper.Watermark="Search"
                  Text="{Binding SearchText, Delay=1000, UpdateSourceTrigger=PropertyChanged}" />
 
         <DockPanel DockPanel.Dock="Top" LastChildFill="True" Margin="3">

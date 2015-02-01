@@ -2,14 +2,14 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>OuiGuiChocolatey</id>
-        <version>0.1</version>
+        <version>0.2</version>
         <title>Oui Gui Chocolatey NuGet</title>
         <authors>Cole Cameron</authors>
         <projectUrl>https://github.com/cmc13/OuiGui</projectUrl>
         <iconUrl>https://github.com/chocolatey/chocolatey/raw/master/docs/logo/chocolateyicon.gif</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>A WPF-based GUI for the Chocolatey NuGet package manager.</description>
-        <copyright>2014 Cole Cameron</copyright>
+        <copyright>2015 Cole Cameron</copyright>
         <language>en-US</language>
         <tags>chocolatey gui nuget</tags>
     </metadata>

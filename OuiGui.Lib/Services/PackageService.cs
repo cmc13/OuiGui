@@ -43,8 +43,8 @@ namespace OuiGui.Lib.Services
 
         #region Public Function Definitions
 
-        public Task<IEnumerable<Package>> ListAvailablePackages(int skip, int take, bool includePrerelease,
-            Action<int> totalItemCountCallback, CancellationToken token)
+        public Task<Tuple<IEnumerable<Package>, int>> ListAvailablePackages(int skip, int take, bool includePrerelease,
+            CancellationToken token)
         {
             if (this.searchTask != null)
             {
@@ -54,7 +54,7 @@ namespace OuiGui.Lib.Services
             }
 
             if (includePrerelease)
-                return this.ListAvailablePrereleasePackages(skip, take, totalItemCountCallback, token);
+                return this.ListAvailablePrereleasePackages(skip, take, token);
             else
             {
                 if (this.listPrereleaseTask != null)
@@ -64,20 +64,22 @@ namespace OuiGui.Lib.Services
                     this.listPrereleaseTask = null;
                 }
 
-                return this.ListAvailablePackages(skip, take, totalItemCountCallback, token);
+                return this.ListAvailablePackages(skip, take, token);
             }
         }
 
-        public Task<IEnumerable<Package>> SearchAvailablePackages(int skip, int take, bool includePrerelease, string searchText,
-            Action<int> totalItemCountCallback, CancellationToken token)
+        public Task<Tuple<IEnumerable<Package>, int>> SearchAvailablePackages(int skip, int take, bool includePrerelease, string searchText,
+            CancellationToken token)
         {
+            int totalPackageCount = 0;
+
             if (this.listPrereleaseTask != null)
             {
                 this.cachedPrereleasePackages.Clear();
                 this.listPrereleaseTask = null;
             }
 
-            var tcs = new TaskCompletionSource<IEnumerable<Package>>();
+            var tcs = new TaskCompletionSource<Tuple<IEnumerable<Package>, int>>();
             NotifyCollectionChangedEventHandler handler = (s, e) =>
             {
                 var packageList = s as ObservableCollection<Package>;
@@ -88,7 +90,7 @@ namespace OuiGui.Lib.Services
                 else
                 {
                     if (packageList.Count >= (skip + take))
-                        tcs.TrySetResult(packageList.OrderBy(p => p.Title).Skip(skip).Take(take));
+                        tcs.TrySetResult(Tuple.Create(packageList.OrderBy(p => p.Title).Skip(skip).Take(take), totalPackageCount));
                 }
             };
 
@@ -97,11 +99,11 @@ namespace OuiGui.Lib.Services
             {
                 var packageList = this.cachedSearchResults;
                 if (this.searchTask.IsCompleted)
-                    tcs.TrySetResult(packageList.Skip(skip).Take(take));
+                    tcs.TrySetResult(Tuple.Create(packageList.Skip(skip).Take(take), totalPackageCount));
                 else
                 {
                     packageList.CollectionChanged += handler;
-                    this.searchTask.ContinueWith(t => tcs.TrySetResult(packageList.Skip(skip).Take(take)), token);
+                    this.searchTask.ContinueWith(t => tcs.TrySetResult(Tuple.Create(packageList.Skip(skip).Take(take), totalPackageCount)), token);
                 }
             }
             else
@@ -133,7 +135,7 @@ namespace OuiGui.Lib.Services
                                 && ex.InnerException.InnerException != null
                                 && ex.InnerException.InnerException is System.Net.WebException)
                             {
-                                tcs.TrySetResult(Enumerable.Empty<Package>());
+                                tcs.TrySetResult(Tuple.Create(Enumerable.Empty<Package>(), 0));
                             }
                             else
                             {
@@ -178,7 +180,7 @@ namespace OuiGui.Lib.Services
                                 return;
                             }
 
-                            totalItemCountCallback(packageList.Count);
+                            totalPackageCount = packageList.Count;
 
                             var continuation = result.GetContinuation();
                             if (continuation == null)
@@ -196,7 +198,7 @@ namespace OuiGui.Lib.Services
                                     && ex.InnerException.InnerException != null
                                     && ex.InnerException.InnerException is System.Net.WebException)
                                 {
-                                    tcs.TrySetResult(Enumerable.Empty<Package>());
+                                    tcs.TrySetResult(Tuple.Create(Enumerable.Empty<Package>(), 0));
                                 }
                                 else
                                 {
@@ -208,14 +210,14 @@ namespace OuiGui.Lib.Services
                         }
 
                         packageList.CollectionChanged -= handler;
-                        tcs.TrySetResult(packageList.OrderBy(p => p.Title).Skip(skip).Take(take));
+                        tcs.TrySetResult(Tuple.Create(packageList.OrderBy(p => p.Title).Skip(skip).Take(take), totalPackageCount));
                     }, token);
             };
 
             return tcs.Task;
         }
 
-        public async Task<IEnumerable<Package>> ListInstalledPackages(int skip, int take, Action<int> totalItemCountCallback, CancellationToken token)
+        public async Task<Tuple<IEnumerable<Package>, int>> ListInstalledPackages(int skip, int take, CancellationToken token)
         {
             if (this.searchTask != null)
             {
@@ -242,13 +244,11 @@ namespace OuiGui.Lib.Services
 
             token.ThrowIfCancellationRequested();
 
-            totalItemCountCallback(packages.Count);
-
-            return packages.Skip(skip).Take(take);
+            return Tuple.Create(packages.Skip(skip).Take(take), packages.Count);
         }
 
-        public async Task<IEnumerable<Package>> SearchInstalledPackages(int skip, int take, string searchText,
-            Action<int> totalItemCountCallback, CancellationToken token)
+        public async Task<Tuple<IEnumerable<Package>, int>> SearchInstalledPackages(int skip, int take, string searchText,
+            CancellationToken token)
         {
             if (this.searchTask != null)
             {
@@ -279,9 +279,7 @@ namespace OuiGui.Lib.Services
                 }
             }
 
-            totalItemCountCallback(packages.Count);
-
-            return packages;
+            return Tuple.Create<IEnumerable<Package>, int>(packages, packages.Count);
         }
 
         public Task<IEnumerable<PackageVersion>> GetVersionHistory(Package package)
@@ -508,10 +506,10 @@ namespace OuiGui.Lib.Services
             return tcs.Task;
         }
 
-        private Task<IEnumerable<Package>> ListAvailablePackages(int skip, int take, Action<int> totalItemCountCallback, CancellationToken token)
+        private Task<Tuple<IEnumerable<Package>, int>> ListAvailablePackages(int skip, int take, CancellationToken token)
         {
             this.searchTask = null;
-            var tcs = new TaskCompletionSource<IEnumerable<Package>>();
+            var tcs = new TaskCompletionSource<Tuple<IEnumerable<Package>, int>>();
 
             var query = (DataServiceQuery<V2FeedPackage>)this.context.Packages
                 .IncludeTotalCount()
@@ -545,7 +543,7 @@ namespace OuiGui.Lib.Services
                         && ex.InnerException.InnerException != null
                         && ex.InnerException.InnerException is System.Net.WebException)
                     {
-                        tcs.TrySetResult(Enumerable.Empty<Package>());
+                        tcs.TrySetResult(Tuple.Create(Enumerable.Empty<Package>(), 0));
                     }
                     else
                     {
@@ -561,8 +559,6 @@ namespace OuiGui.Lib.Services
                     tcs.TrySetCanceled();
                     return;
                 }
-
-                totalItemCountCallback((int)result.TotalCount);
 
                 List<Package> packages = new List<Package>();
                 while (true)
@@ -604,7 +600,7 @@ namespace OuiGui.Lib.Services
                             && ex.InnerException.InnerException != null
                             && ex.InnerException.InnerException is System.Net.WebException)
                         {
-                            tcs.TrySetResult(Enumerable.Empty<Package>());
+                            tcs.TrySetResult(Tuple.Create(Enumerable.Empty<Package>(), 0));
                         }
                         else
                         {
@@ -615,16 +611,17 @@ namespace OuiGui.Lib.Services
                     }
                 }
 
-                tcs.SetResult(packages);
+                tcs.SetResult(Tuple.Create<IEnumerable<Package>, int>(packages, (int)result.TotalCount));
             }, null);
 
             return tcs.Task;
         }
 
-        private Task<IEnumerable<Package>> ListAvailablePrereleasePackages(int skip, int take,
-            Action<int> totalItemCountCallback, CancellationToken token)
+        private Task<Tuple<IEnumerable<Package>, int>> ListAvailablePrereleasePackages(int skip, int take,
+            CancellationToken token)
         {
-            var tcs = new TaskCompletionSource<IEnumerable<Package>>();
+            int totalPackageCount = 0;
+            var tcs = new TaskCompletionSource<Tuple<IEnumerable<Package>, int>>();
             NotifyCollectionChangedEventHandler handler = null;
             handler = (s, e) =>
             {
@@ -640,7 +637,7 @@ namespace OuiGui.Lib.Services
                     if (packageList.Count >= skip + take)
                     {
                         packageList.CollectionChanged -= handler;
-                        tcs.TrySetResult(packageList.ToList().Skip(skip).Take(take));
+                        tcs.TrySetResult(Tuple.Create(packageList.ToList().Skip(skip).Take(take), totalPackageCount));
                     }
                 }
             };
@@ -650,15 +647,14 @@ namespace OuiGui.Lib.Services
                 var packageList = this.cachedPrereleasePackages;
                 if (this.listPrereleaseTask.IsCompleted)
                 {
-                    if (totalItemCountCallback != null)
-                        totalItemCountCallback(packageList.Count);
+                    totalPackageCount = packageList.Count;
                     packageList.CollectionChanged -= handler;
-                    tcs.TrySetResult(packageList.Skip(skip).Take(take));
+                    tcs.TrySetResult(Tuple.Create(packageList.Skip(skip).Take(take), totalPackageCount));
                 }
                 else
                 {
                     packageList.CollectionChanged += handler;
-                    this.listPrereleaseTask.ContinueWith(t => tcs.TrySetResult(packageList.Skip(skip).Take(take)), token);
+                    this.listPrereleaseTask.ContinueWith(t => tcs.TrySetResult(Tuple.Create(packageList.Skip(skip).Take(take), totalPackageCount)), token);
                 }
             }
             else
@@ -689,7 +685,7 @@ namespace OuiGui.Lib.Services
                             && ex.InnerException.InnerException != null
                             && ex.InnerException.InnerException is System.Net.WebException)
                         {
-                            tcs.TrySetResult(Enumerable.Empty<Package>());
+                            tcs.TrySetResult(Tuple.Create(Enumerable.Empty<Package>(), 0));
                         }
                         else
                         {
@@ -727,8 +723,7 @@ namespace OuiGui.Lib.Services
                             return;
                         }
 
-                        if (totalItemCountCallback != null)
-                            totalItemCountCallback(packageList.Count);
+                        totalPackageCount = packageList.Count;
 
                         var continuation = result.GetContinuation();
                         if (continuation == null)
@@ -748,7 +743,7 @@ namespace OuiGui.Lib.Services
                                 && ex.InnerException.InnerException != null
                                 && ex.InnerException.InnerException is System.Net.WebException)
                             {
-                                tcs.TrySetResult(Enumerable.Empty<Package>());
+                                tcs.TrySetResult(Tuple.Create(Enumerable.Empty<Package>(), 0));
                             }
                             else
                             {
@@ -762,7 +757,7 @@ namespace OuiGui.Lib.Services
                     }
 
                     packageList.CollectionChanged -= handler;
-                    tcs.TrySetResult(packageList.OrderBy(p => p.Title).Skip(skip).Take(take));
+                    tcs.TrySetResult(Tuple.Create(packageList.OrderBy(p => p.Title).Skip(skip).Take(take), totalPackageCount));
                 }, token);
             }
 

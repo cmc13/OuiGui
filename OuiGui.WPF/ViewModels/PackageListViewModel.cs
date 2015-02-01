@@ -173,6 +173,7 @@ namespace OuiGui.WPF.ViewModels
                     base.RaisePropertyChanged(() => this.CurrentPage);
                     base.RaisePropertyChanged(() => this.StartIndex);
                     base.RaisePropertyChanged(() => this.EndIndex);
+                    this.GoToPageCommand.RaiseCanExecuteChanged();
                     this.Load();
                 }
             }
@@ -310,26 +311,31 @@ namespace OuiGui.WPF.ViewModels
             IEnumerable<Package> packages = null;
             if (this.packageService != null)
             {
+                Tuple<IEnumerable<Package>, int> packageListAndCount;
+
                 log.Trace("Requesting packages from package service");
                 if (this.CurrentFilter == PackageFilter.InstalledOnly)
                 {
                     log.Trace("Filtering on installed packages");
 
                     if (!string.IsNullOrWhiteSpace(searchText))
-                        packages = await this.packageService.SearchInstalledPackages(skip, take, searchText, t => this.TotalItemCount = t, cancelToken.Token);
+                        packageListAndCount = await this.packageService.SearchInstalledPackages(skip, take, searchText, cancelToken.Token);
                     else
-                        packages = await this.packageService.ListInstalledPackages(skip, take, t => this.TotalItemCount = t, cancelToken.Token);
+                        packageListAndCount = await this.packageService.ListInstalledPackages(skip, take, cancelToken.Token);
                 }
                 else
                 {
                     bool includePrerelease = (this.CurrentFilter == PackageFilter.IncludePrerelease);
                     if (!string.IsNullOrWhiteSpace(searchText))
-                        packages = await this.packageService.SearchAvailablePackages(skip, take, includePrerelease, searchText,
-                            t => this.TotalItemCount = t, cancelToken.Token);
+                        packageListAndCount = await this.packageService.SearchAvailablePackages(skip, take, includePrerelease, searchText,
+                            cancelToken.Token);
                     else
-                        packages = await this.packageService.ListAvailablePackages(skip, take, includePrerelease,
-                            t => this.TotalItemCount = t, cancelToken.Token);
+                        packageListAndCount = await this.packageService.ListAvailablePackages(skip, take, includePrerelease,
+                            cancelToken.Token);
                 }
+
+                packages = packageListAndCount.Item1;
+                this.TotalItemCount = packageListAndCount.Item2;
             }
 
             log.Trace("Clearing old packages from collection");

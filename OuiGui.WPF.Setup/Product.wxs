@@ -72,14 +72,19 @@
               Source="..\OuiGui.WPF\bin\$(var.OuiGui.WPF.Configuration)\NLog.dll" />
       </Component>
     
-      <Component Id="GalaSoftMvvmLightWPF45.dll" Guid="{D0199622-BC27-4C1A-9D40-14DFEC76BECF}">
-        <File Id="GalaSoft.MvvmLight.WPF45.dll" Name="GalaSoft.MvvmLight.WPF45.dll" KeyPath="yes"
-              Source="..\OuiGui.WPF\bin\$(var.OuiGui.WPF.Configuration)\GalaSoft.MvvmLight.WPF45.dll" />
+      <Component Id="GalaSoftMvvmLight.dll" Guid="{D0199622-BC27-4C1A-9D40-14DFEC76BECF}">
+        <File Id="GalaSoft.MvvmLight.dll" Name="GalaSoft.MvvmLight.dll" KeyPath="yes"
+              Source="..\OuiGui.WPF\bin\$(var.OuiGui.WPF.Configuration)\GalaSoft.MvvmLight.dll" />
       </Component>
-    
-      <Component Id="GalaSoftMvvmLightExtrasWPF45Dll" Guid="{00DC28C3-C502-40ED-99D8-E620E7CE9647}">
-        <File Id="GalaSoft.MvvmLight.Extras.WPF45.dll" Name="GalaSoft.MvvmLight.Extras.WPF45.dll" KeyPath="yes"
-              Source="..\OuiGui.WPF\bin\$(var.OuiGui.WPF.Configuration)\GalaSoft.MvvmLight.Extras.WPF45.dll" />
+
+      <Component Id="GalaSoftMvvmLightExtrasDll" Guid="{00DC28C3-C502-40ED-99D8-E620E7CE9647}">
+        <File Id="GalaSoft.MvvmLight.Extras.dll" Name="GalaSoft.MvvmLight.Extras.dll" KeyPath="yes"
+              Source="..\OuiGui.WPF\bin\$(var.OuiGui.WPF.Configuration)\GalaSoft.MvvmLight.Extras.dll" />
+      </Component>
+
+      <Component Id="GalaSoftMvvmLightPlatformDll" Guid="{EFB8D173-B0E0-481A-887F-F88BC11FBAD0}">
+        <File Id="GalaSoft.MvvmLight.Platform.dll" Name="GalaSoft.MvvmLight.Platform.dll" KeyPath="yes"
+              Source="..\OuiGui.WPF\bin\$(var.OuiGui.WPF.Configuration)\GalaSoft.MvvmLight.Platform.dll" />
       </Component>
 
       <Component Id="MahAppsMetroDll" Guid="{89EDE375-B03D-4538-9651-D71A096FBAF4}">

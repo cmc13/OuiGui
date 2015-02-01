@@ -8,10 +8,10 @@ namespace OuiGui.Lib.Services
 {
     public interface IPackageService
     {
-        Task<IEnumerable<Package>> ListAvailablePackages(int skip, int take, bool includePrerelease, Action<int> totalItemCountCallback, CancellationToken token);
-        Task<IEnumerable<Package>> ListInstalledPackages(int skip, int take, Action<int> totalItemCountCallback, CancellationToken token);
-        Task<IEnumerable<Package>> SearchAvailablePackages(int skip, int take, bool includePrerelease, string searchText, Action<int> totalItemCountCallback, CancellationToken token);
-        Task<IEnumerable<Package>> SearchInstalledPackages(int skip, int take, string searchText, Action<int> totalItemCountCallback, CancellationToken token);
+        Task<Tuple<IEnumerable<Package>, int>> ListAvailablePackages(int skip, int take, bool includePrerelease, CancellationToken token);
+        Task<Tuple<IEnumerable<Package>, int>> ListInstalledPackages(int skip, int take, CancellationToken token);
+        Task<Tuple<IEnumerable<Package>, int>> SearchAvailablePackages(int skip, int take, bool includePrerelease, string searchText, CancellationToken token);
+        Task<Tuple<IEnumerable<Package>, int>> SearchInstalledPackages(int skip, int take, string searchText, CancellationToken token);
         Task<IEnumerable<PackageVersion>> GetVersionHistory(Package package);
 
         Task Install(PackageVersion package);
